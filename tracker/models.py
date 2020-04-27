@@ -9,7 +9,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Entry(models.Model):
-    """An Entry in the user's journal"""
+    """An Entry in the user's journal.
+    
+    There is one entry per day
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
     body = models.TextField()
@@ -29,6 +32,10 @@ class Entry(models.Model):
 
     
 class Task(models.Model):
+    """A Task for the user to complete.
+    
+    There are many tasks per day
+    """
     user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tasks')  # The user whose task this is
     date    = models.DateField(auto_now_add=True)                           # Date of task, to allow for tracking
     title   = models.CharField(max_length=100)                              # Name of medication, hobby etc
