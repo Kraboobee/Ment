@@ -5,7 +5,7 @@ The Journal will have one entry per day, and contain a to-do list
 
 from django.db                  import models
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators     import MaxValueValidator, MinValueValidator
 
 
 class Entry(models.Model):
@@ -13,13 +13,16 @@ class Entry(models.Model):
     
     There is one entry per day
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_entry')
     date = models.DateField(auto_now_add=True)
+    # slug
     body = models.TextField()
     mood = models.IntegerField(default=5)
 
     class Meta:
+        ordering            = ['-date']
         verbose_name_plural = "Entries"
+        unique_together     = ('user', 'date')
 
     def __str__(self):
         return 'Entry on {}'.format(self.date)
@@ -27,8 +30,9 @@ class Entry(models.Model):
     #TODO
         # autosave day's events at midnight
             # Info should be added to relevant database and filtered by date
-            #Url for date should be ~ ment/date/mmddyyyy
+            #Url for date should be ~ ment/user/date/mmddyyyy
         # show tasks in Journal
+        # get absolute url
 
     
 class Task(models.Model):
@@ -36,13 +40,12 @@ class Task(models.Model):
     
     There are many tasks per day
     """
-    user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tasks')  # The user whose task this is
-    date    = models.DateField(auto_now_add=True)                           # Date of task, to allow for tracking
-    title   = models.CharField(max_length=100)                              # Name of medication, hobby etc
-    done    = models.BooleanField(default=False, blank=True, null=True)     # If task has been completed today
+    entry   = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name='date_task')  # Date of task, to allow for tracking
+    title   = models.CharField(max_length=100)                                              # Name of medication, hobby etc
+    done    = models.BooleanField(default=False, blank=True, null=True)                     # If task has been completed today
     
     def __str__(self):
-        return '{} on {}'.format(self.title, self.date)
+        return '{} on {}'.format(self.title, self.entry.date)
     
     #TODO
         # getData                   -> return all info from given date. Possibly API

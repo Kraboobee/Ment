@@ -17,6 +17,34 @@ class Profile(models.Model):
     def __str__(self):
         return '{} Profile'.format(self.user.username)
 
+    
+THERAPIST       = 'Therapist'
+PSYCHIATRIST    = 'Psychiatrist'
+DOCTOR          = 'Doctor'
+FAMILY          = 'Family'
+FRIEND          = 'Friend'
+
+CATEGORY_CHOICES = [
+    (THERAPIST,     'Therapist'),
+    (PSYCHIATRIST,  'Psychiatrist'),
+    (DOCTOR,        'Doctor'),
+    (FAMILY,        'Family'),
+    (FRIEND,        'Friend'),
+    ('',            'Any')
+]
+class ContactInfo(models.Model):
+    """Contact information for important people in the user's life"""
+    name = models.CharField(max_length=50)
+    role = models.CharField(
+        max_length  = 12,
+        choices     = CATEGORY_CHOICES,
+        default     = FRIEND,
+    )
+    tel_no = models.CharField(max_length=20)
+    tel_no2 = models.CharField(max_length=20)
+    tel_no3 = models.CharField(max_length=20)
+    email = models.EmailField()
+
 
 class MoodHistory(models.Model):
     """The user's mood history"""
@@ -27,6 +55,7 @@ class MoodHistory(models.Model):
     
     def __str__(self):
         return '{} Mood History'.format(self.user.username)
+
     
 class Medication(models.Model):
     """The user's prescribed medication"""

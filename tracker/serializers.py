@@ -16,7 +16,7 @@ class EntrySerializer(serializers.ModelSerializer):
         
 class TaskSerializer(serializers.ModelSerializer):
     """Serializes Tasks"""
-    fields = ('date', 'title', 'done')          # Should return all tasks where user==USER and date==DATE
+    fields = ('entry', 'title', 'done')          # Should return all tasks where user==USER and date==DATE
     
     class Meta:
         model = Task
