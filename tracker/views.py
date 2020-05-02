@@ -1,3 +1,13 @@
 from django.shortcuts import render
 
-# Create your views here.
+#TODO
+
+# 🏡 Home
+# ❓ About
+
+# EntryListView
+# EntryDetailView
+# EntryCRUDViews
+
+# Dashboard     (TrackerListView)
+# Tracker       (TrackerDetailView)

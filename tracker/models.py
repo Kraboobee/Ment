@@ -6,6 +6,7 @@ The Journal will have one entry per day, and contain a to-do list
 from django.db                  import models
 from django.contrib.auth.models import User
 from django.core.validators     import MaxValueValidator, MinValueValidator
+from users.models               import User, EnjoyMent, TreatMent, FulfilMent
 
 
 class Entry(models.Model):
@@ -17,7 +18,7 @@ class Entry(models.Model):
     date = models.DateField(auto_now_add=True)
     # slug
     body = models.TextField()
-    mood = models.IntegerField(default=5)
+    # mood = models.IntegerField(default=5)
 
     class Meta:
         ordering            = ['-date']
@@ -35,7 +36,7 @@ class Entry(models.Model):
         # get absolute url
 
     
-class Task(models.Model):
+class CommitMent(models.Model):
     """A Task for the user to complete.
     
     There are many tasks per day
@@ -73,7 +74,38 @@ class Task(models.Model):
                 # recommended: Sleep, eat, exercise, shower, speak to friends, drink, smoke, drugs
 
 
+class MoodTracker(models.Model):
+    """Tracker for user's mood over time"""
+    date_recorded   = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name='mood_on_date')
+    ave_mood        = models.IntegerField(
+                                default=5,
+                                validators=[MaxValueValidator(10), MinValueValidator(1)] 
+                                )
+    high_mood       = models.IntegerField(default=5)         # User's peak mood of the day - default 5/10 or 0 for BPD
+    low_mood        = models.IntegerField(default=5)         # User's lowest mood of the day - see above
+    notes           = models.CharField(max_length=140)       # Notes for the user's medical professionals to read
+
+#     # user.MoodHistory.ave_mood by default. User may input median/perceived average
+#     # if user.hasBPD(): default=0, validators=[MaxValueValidator(5), MinValueValidator(-5)]
+#     # functions
+#         # setAverage -> best + lowest / 2
+
+# #     class Meta(Tracker.Meta):
+# #         db_table = 'mood'
+
+class HabitTracker(models.Model):
+    date_recorded   = models.ForeignKey(Entry, on_delete=models.ForeignKey)
+    name            = models.ForeignKey(FulfilMent, on_delete=models.CASCADE, related_name='habit_on_date')
+    done            = models.BooleanField(default=False)
+    time_spent      = models.IntegerField(default=0)
+    
+    
+class MedTracker(models.Model):
+    date_recorded   = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name='meds_on_date')
+    done            = models.BooleanField(default=False)
+
 #______________________________________________________________NOTES__________________________________________________________________#
+
 
 # class Tracker(models.Model):
 #     """Abstract class from which all trackers will inherit"""
@@ -87,23 +119,7 @@ class Task(models.Model):
 #         ordering = ['-date']
         
 
-# class MoodTracker(Tracker):
-#     """Tracker for user's mood over time"""
-#     score           = models.IntegerField(
-#                                 default=5,
-#                                 validators=[MaxValueValidator(10), MinValueValidator(1)] 
-#                                 )
-#     high_mood       = models.IntegerField(default=5)         # User's peak mood of the day - default 5/10 or 0 for BPD
-#     low_mood        = models.IntegerField(default=5)         # User's lowest mood of the day - see above
-#     notes           = models.CharField(max_length=140)
                    
-#     # user.MoodHistory.ave_mood by default. User may input median/perceived average
-#     # if user.hasBPD(): default=0, validators=[MaxValueValidator(5), MinValueValidator(-5)]
-#     # functions
-#         # setAverage -> best + lowest / 2
-
-# #     class Meta(Tracker.Meta):
-# #         db_table = 'mood'
         
 
 # # Tracks user's habits and hobbies. Can be good or bad. User can measure time spent or quantity (Cigarettes/drinks)

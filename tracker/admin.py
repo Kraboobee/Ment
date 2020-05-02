@@ -1,3 +1,5 @@
 from django.contrib import admin
+from tracker.models import Entry, CommitMent
 
-# Register your models here.
+admin.site.register(Entry)
+admin.site.register(CommitMent)

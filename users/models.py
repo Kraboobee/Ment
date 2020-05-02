@@ -32,7 +32,7 @@ CATEGORY_CHOICES = [
     (FRIEND,        'Friend'),
     ('',            'Any')
 ]
-class ContactInfo(models.Model):
+class AccompaniMent(models.Model):
     """Contact information for important people in the user's life"""
     name = models.CharField(max_length=50)
     role = models.CharField(
@@ -40,13 +40,16 @@ class ContactInfo(models.Model):
         choices     = CATEGORY_CHOICES,
         default     = FRIEND,
     )
-    tel_no = models.CharField(max_length=20)
-    tel_no2 = models.CharField(max_length=20)
-    tel_no3 = models.CharField(max_length=20)
-    email = models.EmailField()
+    tel_no = models.CharField(max_length=20, blank=True, null=True)
+    tel_no2 = models.CharField(max_length=20, blank=True, null=True)
+    tel_no3 = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    
+    def __str__(self):
+        return 'Contact details for {} ({})'.format(self.name, self.role)
 
 
-class MoodHistory(models.Model):
+class EnjoyMent(models.Model):
     """The user's mood history"""
     user            = models.OneToOneField(User, on_delete=models.CASCADE)
     ave_mood        = models.IntegerField(default=5)    # average mood of all time
@@ -57,10 +60,10 @@ class MoodHistory(models.Model):
         return '{} Mood History'.format(self.user.username)
 
     
-class Medication(models.Model):
+class TreatMent(models.Model):
     """The user's prescribed medication"""
     user                = models.ForeignKey(User, on_delete=models.CASCADE)
-    name                = models.CharField()                        # Name of medication
+    name                = models.CharField(max_length=25)                        # Name of medication
     prescribed_dosage   = models.IntegerField()                     # Prescribed dosage per pill - default mg
     # g or mg                                                       # if dosage in mg or g
     doses_per_day       = models.IntegerField()                     # To track if user has taken all required doses
@@ -69,10 +72,11 @@ class Medication(models.Model):
     scriptAvail         = models.BooleanField(default=False)        # if meds running out, tell user to get new script
     start_date          = models.DateField(null=True, blank=True)
     end_date            = models.DateField(null=True, blank=True)
+    active              = models.BooleanField(default=True)         # if user is currently on this medication
 
     # functions
     def __str__(self):
-        return '{} Medication History'.format(self.user.username)
+        return '{} Medication ({} {})'.format(self.user.username, self.name, self.prescribed_dosage)
     
     def refill(self, num_pills=30):
         """Method to increase count of pills after collection. Default 30 pills"""
@@ -118,7 +122,7 @@ CATEGORY_CHOICES = [
     ('', 'Any'),
 ]
 
-class Habit(models.Model):
+class FulfilMent(models.Model):
     """A habit or hobby the user is trying to keep up with"""
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     name        = models.CharField(max_length=25)
@@ -130,6 +134,7 @@ class Habit(models.Model):
     is_good     = models.BooleanField(default=True)
     goal_time   = models.IntegerField(null=True, blank=True)
     goal_qty    = models.IntegerField(null=True, blank=True)
+    total_time  = models.IntegerField(default=0)                # Total amount of time the user has spent on his or her hobby/habit
     
     def __str__(self):
         return '{} {}: {}'.format(self.user.username, self.category, self.name)
