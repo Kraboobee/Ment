@@ -12,6 +12,7 @@ class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
         fields = ('user', 'date', 'mood')           # Should return all Entries where user==USER
+        # fields should include all fields
         
         
 # class TaskSerializer(serializers.ModelSerializer):

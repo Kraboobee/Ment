@@ -7,6 +7,12 @@ information and demographic information
 from django.db                  import models
 from django.contrib.auth.models import User
 
+# TODO
+    # API for USER
+        # name
+        # medication name and number of doses for each medication
+        # habit name for each habit
+        # average mood -> maybe. The default might just be deviation of 0
 
 class Profile(models.Model):
     """User's Profile"""
@@ -124,17 +130,16 @@ CATEGORY_CHOICES = [
 
 class FulfilMent(models.Model):
     """A habit or hobby the user is trying to keep up with"""
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
-    name        = models.CharField(max_length=25)
-    category    = models.CharField(
-                      max_length  = 5,
-                      choices     = CATEGORY_CHOICES,
-                      default     = HABIT
-                  )
-    is_good     = models.BooleanField(default=True)
-    goal_time   = models.IntegerField(null=True, blank=True)
-    goal_qty    = models.IntegerField(null=True, blank=True)
-    total_time  = models.IntegerField(default=0)                # Total amount of time the user has spent on his or her hobby/habit
+    user                = models.ForeignKey(User, on_delete=models.CASCADE)
+    name                = models.CharField(max_length=25)
+    category            = models.CharField(
+                              max_length  = 5,
+                              choices     = CATEGORY_CHOICES,
+                              default     = HABIT
+                          )
+    is_good             = models.BooleanField(default=True)
+    goal_time_qty       = models.IntegerField(null=True, blank=True)    # Goal time or quantity
+    total_time_qty      = models.IntegerField(default=0)                # Total amount of time the user has spent on his or her hobby/habit
     
     def __str__(self):
         return '{} {}: {}'.format(self.user.username, self.category, self.name)
